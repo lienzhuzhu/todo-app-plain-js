@@ -84,6 +84,8 @@ function addItem(event) {
             newItemDiv.appendChild(newItemBox);
             newItemDiv.appendChild(newItemDelBtn);
 
+
+
             console.log(todo);
 
         } else if (this.readyState == 4) {
@@ -100,7 +102,7 @@ function addItem(event) {
     addX.setRequestHeader("x-api-key", apiKey);
     addX.send(JSON.stringify(data));
 
-    console.log("working");
+    document.getElementById("add-input").value = "";
 }
 
 inputForm.addEventListener("submit", addItem);
