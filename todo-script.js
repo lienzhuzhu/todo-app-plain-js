@@ -24,6 +24,21 @@ function loadPage() {
     loadX.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var todos = JSON.parse(this.responseText);
+            // iterate through array and put all elements on page
+            // maybe use logic in addItem() to put things in DOM
+            //
+            
+            // for each item in todos:
+            //      make some html elements with data attributes with value of the id
+            //      add to dom
+            //      if (complete == true) {
+            //          style with strikethrough
+            //      }
+
+
+
+
+
             console.log(todos);
         }
     };
@@ -39,6 +54,9 @@ loadPage();
 
 // add a todo item
 // bind to form submit
+//
+//
+// CAN CALL loadPage()
 //
 function addItem(event) {
     event.preventDefault();
