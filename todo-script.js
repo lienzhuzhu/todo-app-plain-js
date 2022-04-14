@@ -2,44 +2,104 @@
 //
 
 
-
+const apiKey = "96364a-276feb-952475-c85e9e-d6e333";
 
 let inputForm = document.getElementById("add-item-form");
 
-
-let apiKey = "96364a-276feb-952475-c85e9e-d6e333";
-
+loadPage();
 
 
 
+// helper method that clears page to prevent duplicate item displays
+//
+function clearPage() {
 
-// function that loads initial page
-// no reloads will be used from here
-// AJAX calls only to update content
-// refreshing window should retain data
+    let contentArea = document.getElementById("main-wrapper");
+    let currItems = document.getElementsByClassName("todo-item-wrapper");
+
+    for (i = 0; i < currItems.length; i++) {
+        contentArea.removeChild(currItems[i]);
+    }
+}
+
+
+
+// function that loads todo items into dom elements
 //
 function loadPage() {
+
+    console.log("start of loadPage()");
+
+
+    // clear page to prevent duplicate display by calling clearPage()
+    //
+    clearPage();
+    
+    console.log("page cleared");
+    
     var loadX = new XMLHttpRequest();
 
     loadX.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
+
             var todos = JSON.parse(this.responseText);
-            // iterate through array and put all elements on page
-            // maybe use logic in addItem() to put things in DOM
-            //
             
-            // for each item in todos:
+            // for each item in todos {
             //      make some html elements with data attributes with value of the id
             //      add to dom
             //      if (complete == true) {
             //          style with strikethrough
             //      }
+            //  }
+            
+            for (i = 0; i < todos.length; i++) {
+
+                let item = todos[i];
+
+                // print debug
+                //
+                console.log(item.text + " is being displayed");
+
+                let ItemDiv = document.createElement("div");
+                ItemDiv.className = "todo-item-wrapper";
+                ItemDiv.setAttribute("data-id", item.id);
+
+                let ItemText = document.createElement("p");
+                ItemText.className = "item-text-class";
+                ItemText.innerHTML = item.text;
+
+                // strikethrough complete items
+                //
+                if (item.complete == true) {
+                    ItemText.style.textDecoration = "line-through";
+                } else {
+                    ItemText.style.textDecoration = "none";
+                }
+
+                let ItemBox = document.createElement("input");
+                ItemBox.type = "checkbox";
+                ItemBox.className = "complete-checkbox-class";
+                ItemBox.setAttribute("data-id", item.id);
+
+                let ItemDelBtn = document.createElement("input");
+                ItemDelBtn.type = "button";
+                ItemDelBtn.className = "delete-button-class";
+                ItemDelBtn.value = "delete";
+                ItemDelBtn.setAttribute("data-id", item.id);
+                ItemDelBtn.addEventListener("click", deleteItem);
+
+                let contentArea = document.getElementById("main-wrapper");
+                contentArea.appendChild(ItemDiv);
+                
+                ItemDiv.appendChild(ItemBox);
+                ItemDiv.appendChild(ItemText);
+                ItemDiv.appendChild(ItemDelBtn);
+            }
 
 
-
-
-
-            console.log(todos);
+            // print debug
+            //
+            console.log("end of loadPage()");
         }
     };
 
@@ -48,15 +108,9 @@ function loadPage() {
     loadX.send();
 }
 
-loadPage();
-
 
 
 // add a todo item
-// bind to form submit
-//
-//
-// CAN CALL loadPage()
 //
 function addItem(event) {
     event.preventDefault();
@@ -80,39 +134,19 @@ function addItem(event) {
             // parse JSON response
             var todo = JSON.parse(this.responseText);
 
-            let newItemDiv = document.createElement("div");
-            newItemDiv.class = "todo-item-wrapper";
-            newItemDiv.setAttribute("data-id", todo.id);
+            // after adding item, call loadPage()
+            // 
+            loadPage();
 
-            let newItemText = document.createElement("p");
-            newItemText.innerHTML = todo.text;
-
-            let newItemBox = document.createElement("input");
-            newItemBox.type = "checkbox";
-            newItemBox.setAttribute("data-id", todo.id);
-
-            let newItemDelBtn = document.createElement("input");
-            newItemDelBtn.type = "button";
-            newItemDelBtn.value = "delete";
-            newItemDelBtn.setAttribute("data-id", todo.id);
-
-            let contentArea = document.getElementById("main-wrapper");
-            contentArea.appendChild(newItemDiv);
-            newItemDiv.appendChild(newItemText);
-            newItemDiv.appendChild(newItemBox);
-            newItemDiv.appendChild(newItemDelBtn);
-
-
-
-            console.log(todo);
+            // print debug
+            //
+            console.log("a todo was added: " + todo.text);
 
         } else if (this.readyState == 4) {
-
             // this.status !== 200, error from server
             console.log(this.responseText);
-
         }
-    };
+    }
 
     addX.open("POST", "https://cse204.work/todos", true);
 
@@ -120,6 +154,8 @@ function addItem(event) {
     addX.setRequestHeader("x-api-key", apiKey);
     addX.send(JSON.stringify(data));
 
+    // clear input box
+    //
     document.getElementById("add-input").value = "";
 }
 
@@ -127,39 +163,57 @@ inputForm.addEventListener("submit", addItem);
 
 
 
+// set complete status on checkbox click
+//
+function setComplete() {
 
+}
 
 
 
 
 // request to delete an item
 //
+function deleteItem() {
+    // Setting variable for form input (get from HTML form)
+    let id = this.getAttribute("data-id");
 
-// Setting variable for form input (get from HTML form)
-// let id = "48facf20-badf-11ec-b19e-ef11f1352405";
+    // Initalize AJAX Request
+    var delX = new XMLHttpRequest();
 
-// // Initalize AJAX Request
-// var loadX2 = new XMLHttpRequest();
+    // Response handler
+    delX.onreadystatechange = function() {
 
-// // Response handler
-// loadX2.onreadystatechange = function() {
+        // Wait for readyState = 4 & 200 response
+        if (this.readyState == 4 && this.status == 200) {
 
-//     // Wait for readyState = 4 & 200 response
-//     if (this.readyState == 4 && this.status == 200) {
+            loadPage();
 
-//         console.log("deleted");
+            // print debug
+            //
+            console.log(id + " was deleted");
 
-//     } else if (this.readyState == 4) {
+        } else if (this.readyState == 4) {
 
-//         // this.status !== 200, error from server
-//         console.log(this.responseText);
+            // this.status !== 200, error from server
+            console.log(this.responseText);
 
-//     }
-// };
+        }
+    }
 
-// loadX2.open("DELETE", "https://cse204.work/todos/"+id, true);
+    delX.open("DELETE", "https://cse204.work/todos/"+id, true);
 
-// loadX2.setRequestHeader("Content-type", "application/json");
-// loadX2.setRequestHeader("x-api-key", "96364a-276feb-952475-c85e9e-d6e333");
-// loadX2.send();
+    delX.setRequestHeader("Content-type", "application/json");
+    delX.setRequestHeader("x-api-key", "96364a-276feb-952475-c85e9e-d6e333");
+    delX.send();
+
+    
+}
+
+
+
+
+
+
+    
 

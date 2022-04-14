@@ -25,3 +25,26 @@ body {
     font-family: "Courier";
 }
 
+.content-wrapper {
+    padding-bottom: 30px;
+}
+
+.todo-item-wrapper {
+    border: 1px solid red;
+    padding: 20px;
+}
+
+.complete-checkbox-class {
+    display: inline;
+}
+
+.item-text-class {
+    display: inline;
+}
+
+.delete-button-class {
+    display: inline;
+    width: 50px;
+    height: 20px;
+}
+
