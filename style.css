@@ -7,6 +7,8 @@ body {
 .content-wrapper {
     width: 100%;
     text-align: center;
+    padding-bottom: 30px;
+
 }
 
 .title {
@@ -18,6 +20,11 @@ body {
     border-radius: 10px;
 }
 
+#add-input:focus {
+    border-color: salmon;
+    outline: none;
+}
+
 #add-button {
     background-color: salmon;
     border-radius: 10px;
@@ -25,12 +32,15 @@ body {
     font-family: "Courier";
 }
 
-.content-wrapper {
-    padding-bottom: 30px;
+#main-wrapper {
+    width: 40%;
+    margin: auto;
+    border: 5px solid black;
+    border-radius: 20px;
+    padding: 15px;
 }
 
 .todo-item-wrapper {
-    border: 1px solid red;
     padding: 20px;
 }
 
@@ -40,11 +50,19 @@ body {
 
 .item-text-class {
     display: inline;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .delete-button-class {
     display: inline;
-    width: 50px;
+    padding: 0px;
+    text-align: center;
+    width: 60px;
     height: 20px;
+    background-color: white;
+    border-radius: 5px;
+    border-color: white;
+    font-family: "Courier";
 }
 

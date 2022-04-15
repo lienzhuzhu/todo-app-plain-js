@@ -7,39 +7,48 @@ const apiKey = "96364a-276feb-952475-c85e9e-d6e333";
 let inputForm = document.getElementById("add-item-form");
 inputForm.addEventListener("submit", addItem);
 
+loadItems();
 
 // DISPLAY ITEM IN DOM
 //
 function displayItem(todoItem) {
 
-
-    // only take in one todoItem
-    // display that one item in DOM
-    //
-     
-    
     // create item wrapper
     //
     let ItemDiv = document.createElement("div");
     ItemDiv.className = "todo-item-wrapper";
     ItemDiv.setAttribute("data-id", todoItem.id);
+    ItemDiv.setAttribute("id", todoItem.id);
 
     // create text, checkbox, delete button for the item
     //
     let ItemText = document.createElement("p");
     ItemText.className = "item-text-class";
     ItemText.innerHTML = todoItem.text;
+    ItemText.setAttribute("id", "p-"+todoItem.id);
 
     let ItemBox = document.createElement("input");
     ItemBox.type = "checkbox";
     ItemBox.className = "complete-checkbox-class";
     ItemBox.setAttribute("data-id", todoItem.id);
+    ItemBox.addEventListener("click", setComplete);
+
+    // on refresh, need to set checkbox and completed again
+    //
+    if (todoItem.completed == true) {
+        ItemText.style.textDecoration = "line-through";
+        ItemBox.checked = true;
+    } else {
+        ItemText.style.textDecoration = "none";
+        ItemBox.checked = false;
+    }
 
     let ItemDelBtn = document.createElement("input");
     ItemDelBtn.type = "button";
     ItemDelBtn.className = "delete-button-class";
     ItemDelBtn.value = "delete";
     ItemDelBtn.setAttribute("data-id", todoItem.id);
+    ItemDelBtn.addEventListener("click", deleteItem); //
 
     // append item wrapper to content div
     //
@@ -52,7 +61,7 @@ function displayItem(todoItem) {
     ItemDiv.appendChild(ItemText);
     ItemDiv.appendChild(ItemDelBtn);
 
-    addHandlers(todoItem);
+    // addHandlers(todoItem);
 }
 
 
@@ -68,9 +77,6 @@ function loadItems() {
             var todos = JSON.parse(this.responseText);
             console.log(todos);
 
-            // might need to clear each item out for reload
-            //
-            
             for (i = 0; i < todos.length; i++) {
                 displayItem(todos[i]);
             }
@@ -81,21 +87,6 @@ function loadItems() {
     loadX.open("GET", "https://cse204.work/todos", true);
     loadX.setRequestHeader("x-api-key", apiKey);
     loadX.send();
-}
-
-
-// ADD EVENT LISTENERS FOR CHECKBOX AND DELETE BUTTONS
-//
-function addHandlers(todoItem) {
-
-    let id = todoItem.id;
-
-    let button = document.querySelector('[className="delete-button-class"][data-id=id]');
-    button.addEventListener("click", deleteItem);
-
-    let box = document.querySelector('[className="complete-checkbox-class"][data-id=id]');
-
-    box.addEventListener("click", setComplete);
 }
 
 
@@ -163,10 +154,11 @@ function deleteItem() {
             // remove div that displays the item from main-wrapper 
             // if item successfully removed from server
             //
-            let contentDiv = document.getElementById("main-wrapper");
-            let deleteDiv = document.querySelector('[className="todo-item-wrapper"][data-id=id]');
+            let deleteDiv = document.getElementById(id);
+        
+            deleteDiv.remove();
 
-            contentDiv.remove(deleteDiv);
+            // loadItems();
 
         } else if (this.readyState == 4) {
             // this.status !== 200, error from server
@@ -182,65 +174,57 @@ function deleteItem() {
 }
 
 
-loadItems();
+// SET COMPLETE STATUS ON CHECKBOX CLICK
+//
+function setComplete() {
 
+    let id = this.getAttribute("data-id");
+    let pTag = document.getElementById("p-"+id);
 
-
-// // strikethrough complete items
-// //
-// if (item.completed == true) {
-//     ItemText.style.textDecoration = "line-through";
-// } else {
-//     ItemText.style.textDecoration = "none";
-// }
-
-
-// // SET COMPLETE STATUS ON CHECKBOX CLICK
-// //
-// function setComplete() {
-
-//     let id = this.getAttribute("data-id");
-
-//     if (this.checked) {
-//         var data = {
-//             "completed": true
-//         }
-//     } else {
-//         var data = {
-//             "completed": false
-//         }
-//     }
+    if (this.checked) {
+        var data = {
+            "completed": true
+        }
+    } else {
+        var data = {
+            "completed": false
+        }
+    }
     
 
-//     // Initalize AJAX Request
-//     var checkX = new XMLHttpRequest();
+    // Initalize AJAX Request
+    var checkX = new XMLHttpRequest();
 
-//     // Response handler
-//     checkX.onreadystatechange = function() {
+    // Response handler
+    checkX.onreadystatechange = function() {
 
-//         // Wait for readyState = 4 & 200 response
-//         if (this.readyState == 4 && this.status == 200) {
+        // Wait for readyState = 4 & 200 response
+        if (this.readyState == 4 && this.status == 200) {
 
-//             // parse JSON response
-//             var todo = JSON.parse(this.responseText);
+            // parse JSON response
+            var todo = JSON.parse(this.responseText);
 
-//             // after updating item, clear the item from DOM
-//             // then call displayItem() again
-//             //
+            //strikethrough complete items
+            //
+            if (todo.completed == true) {
+                pTag.style.textDecoration = "line-through";
+            } else {
+                pTag.style.textDecoration = "none";
+            }
 
 
-//         } else if (this.readyState == 4) {
-//             // this.status !== 200, error from server
-//             console.log(this.responseText);
-//         }
-//     }
+        } else if (this.readyState == 4) {
+            // this.status !== 200, error from server
+            console.log(this.responseText);
+        }
+    }
 
-//     checkX.open("PUT", "https://cse204.work/todos/"+id, true);
+    checkX.open("PUT", "https://cse204.work/todos/"+id, true);
 
-//     checkX.setRequestHeader("Content-type", "application/json");
-//     checkX.setRequestHeader("x-api-key", apiKey);
-//     checkX.send(JSON.stringify(data));
-// }
+    checkX.setRequestHeader("Content-type", "application/json");
+    checkX.setRequestHeader("x-api-key", apiKey);
+    checkX.send(JSON.stringify(data));
+}
 
 
 
