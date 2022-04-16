@@ -2,7 +2,7 @@
 //
 
 
-const apiKey = "96364a-276feb-952475-c85e9e-d6e333";
+const apiKey = configData.API_KEY;
 
 let inputForm = document.getElementById("add-item-form");
 inputForm.addEventListener("submit", addItem);
