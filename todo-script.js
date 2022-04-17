@@ -1,6 +1,7 @@
 // Implementation of ToDo app features
 //
 
+import { configData } from './config.js';
 
 const apiKey = configData.API_KEY;
 
@@ -77,7 +78,7 @@ function loadItems() {
             var todos = JSON.parse(this.responseText);
             console.log(todos);
 
-            for (i = 0; i < todos.length; i++) {
+            for (let i = 0; i < todos.length; i++) {
                 displayItem(todos[i]);
             }
            
